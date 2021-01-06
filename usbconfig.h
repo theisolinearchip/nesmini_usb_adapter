@@ -5,6 +5,14 @@
  * Tabsize: 4
  * Copyright: (c) 2005 by OBJECTIVE DEVELOPMENT Software GmbH
  * License: GNU GPL v2 (see License.txt), GNU GPL v3 or proprietary (CommercialLicense.txt)
+ *
+ * Some modifications were made in order to work with an attiny85 and also
+ * avoiding usign the default interrupt pins, since one of them is also the
+ * SDA signal used in the I2C part. To change the "default behaviour" we need
+ * to set the proper USB_CFG_DMINUS_BIT and USB_CFG_DPLUS_BIT pins but also
+ * change all the Interrupts config (check the last part of this file, there
+ * is an explanation for all the changes I made)
+ *
  */
 
 #ifndef __usbconfig_h_included__
