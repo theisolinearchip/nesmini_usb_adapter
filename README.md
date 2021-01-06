@@ -44,3 +44,5 @@ the Mini consoles or the Wii Nunchuk)
 
 [http://albertgonzalez.coffee/projects/snes_mini_arduino/](http://albertgonzalez.coffee/projects/snes_mini_arduino/) When I started tinkering with this Mini Controllers
 I did some stuff using Arduinos instead of "raw" AVR's. Here are some of the notes I wrote about connecting (S)NES Mini Controllers to an Arduino board.
+
+[http://eleccelerator.com/fusecalc/fusecalc.php?chip=attiny85](http://eleccelerator.com/fusecalc/fusecalc.php?chip=attiny85) Fuse calculator
