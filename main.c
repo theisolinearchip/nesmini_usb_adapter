@@ -22,8 +22,6 @@
 	The V-USB library is under a GPL 2: https://www.obdev.at/products/vusb/license.html
 */
 
-#define USB_HID_REPORT_DESCRIPTOR_SIZE 26
-
 #define LED_PIN	4
 
 #include <avr/io.h>
@@ -36,21 +34,20 @@
 
 #include "nesminicontrollerdrv.c"
 
-PROGMEM const char usbHidReportDescriptor[USB_HID_REPORT_DESCRIPTOR_SIZE] = {
-	0x05, 0x01,                   //USAGE_PAGE (Generic Desktop)
-	0x09, 0x05,                   //USAGE (Game Pad)
-	0xa1, 0x01,                   //COLLECTION (APPLICATION)
-	0xa1, 0x00,                    //   COLLECTION (Physical)
-	0x05, 0x09,                   //USAGE_PAGE (Button)
-	0x19, 0x01,                   //USAGE_MINIMUM (Button1)
-	0x29, 0x08,                   //USAGE_MAXIMUM (Button 8)
-	0x15, 0x00,                   //LOGICAL_MINIMUM (0)
-	0x25, 0x01,                   //LOGICAL_MAXIMUM(1)
-	0x95, 0x08,                   //REPORT_COUNT (8)
-	0x75, 0x01,                   //REPORT_SIZE (1)
-	0x81, 0x02,                   //INPUT(Data, Var, Abs)
-	0xc0,                     //END_Collection
-	0xc0                      //END_Collection
+// also change USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH on usbconfig.h
+PROGMEM const char usbHidReportDescriptor[23] = {
+    0x05, 0x01,                    // USAGE_PAGE (Generic Desktop)
+    0x09, 0x04,                    // USAGE (Mouse)
+    0xA1, 0x01,                    // COLLECTION (Application)
+    0x05, 0x09,                    //   USAGE_PAGE (Button)
+    0x19, 0x01,                    //   USAGE_MINIMUM
+    0x29, 0x08,                    //   USAGE_MAXIMUM
+    0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
+    0x25, 0x01,                    //   LOGICAL_MAXIMUM (1)
+    0x95, 0x08,                    //   REPORT_COUNT (8)
+    0x75, 0x01,                    //   REPORT_SIZE (1)
+    0x81, 0x02,                    //   INPUT (Data,Var,Abs)
+    0xC0,                          // END_COLLECTION
 };
 
 typedef struct{
@@ -88,7 +85,7 @@ usbRequest_t    *rq = (void *)data;
 }
 
 void process_buttons() {
-	reportBuffer.buttonMask = 0;
+	reportBuffer.buttonMask = 0x00;
 
 	// UP 0
 	// RIGHT 1
@@ -117,7 +114,7 @@ void process_buttons() {
 int __attribute__((noreturn)) main(void) {
 
 	DDRB |= (1 << LED_PIN);
-	
+
 	uchar i;
 	nes_controller_state = 0;
 

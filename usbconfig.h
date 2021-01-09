@@ -237,7 +237,7 @@ section at the end of this file).
  * with libusb: 0x16c0/0x5dc.  Use this VID/PID pair ONLY if you understand
  * the implications!
  */
-#define  USB_CFG_DEVICE_ID       0xe8, 0x03 /* VOTI's lab use PID */
+#define  USB_CFG_DEVICE_ID       0x01, 0x01 /* VOTI's lab use PID */ 
 /* This is the ID of the product, low byte first. It is interpreted in the
  * scope of the vendor ID. If you have registered your own VID with usb.org
  * or if you have licensed a PID from somebody else, define it here. Otherwise
@@ -251,8 +251,8 @@ section at the end of this file).
 #define USB_CFG_DEVICE_VERSION  0x00, 0x01
 /* Version number of the device: Minor number first, then major number.
  */
-#define USB_CFG_VENDOR_NAME     'o', 'b', 'd', 'e', 'v', '.', 'a', 't'
-#define USB_CFG_VENDOR_NAME_LEN 8
+#define USB_CFG_VENDOR_NAME     'a', 'l', 'b', 'e', 'r', 't', 'g', 'o', 'n', 'z', 'a', 'l', 'e', 'z', '.', 'c', 'o', 'f', 'f', 'e', 'e'
+#define USB_CFG_VENDOR_NAME_LEN 21
 /* These two values define the vendor name returned by the USB device. The name
  * must be given as a list of characters under single quotes. The characters
  * are interpreted as Unicode (UTF-16) entities.
@@ -261,8 +261,8 @@ section at the end of this file).
  * obdev's free shared VID/PID pair. See the file USB-IDs-for-free.txt for
  * details.
  */
-#define USB_CFG_DEVICE_NAME     'M', 'o', 'u', 's', 'e'
-#define USB_CFG_DEVICE_NAME_LEN 5
+#define USB_CFG_DEVICE_NAME     'N', 'E', 'S', ' ', 'M', 'i', 'n', 'i', ' ', 'C', 'o', 'n', 't', 'r', 'o', 'l', 'l', 'e', 'r', ' ', 'A', 'd', 'a', 'p', 't', 'e', 'r'
+#define USB_CFG_DEVICE_NAME_LEN 27
 /* Same as above for the device name. If you don't want a device name, undefine
  * the macros. See the file USB-IDs-for-free.txt before you assign a name if
  * you use a shared VID/PID.
@@ -289,11 +289,7 @@ section at the end of this file).
  * HID class is 3, no subclass and protocol required (but may be useful!)
  * CDC class is 2, use subclass 2 and protocol 1 for ACM
  */
-#ifdef USB_HID_REPORT_DESCRIPTOR_SIZE
-#   define USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH USB_HID_REPORT_DESCRIPTOR_SIZE
-#else
-#   define USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH 52
-#endif
+#define USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH 23
 /* Define this to the length of the HID report descriptor, if you implement
  * an HID device. Otherwise don't define it or define it to 0.
  * If you use this define, you must add a PROGMEM character array named
