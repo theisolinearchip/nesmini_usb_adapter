@@ -28,6 +28,8 @@ The input pins are also different than the ones in the post, since one of those 
 the 4 pins.
 
 ## Useful links
+[https://hackaday.io/project/176939-nes-mini-controller-usb-adapter-with-attiny85](https://hackaday.io/project/176939-nes-mini-controller-usb-adapter-with-attiny85) This project on my hackaday.io page (with schematics and more info)
+
 [https://www.obdev.at/products/vusb/index.html](https://www.obdev.at/products/vusb/index.html) The V-USB library, software implementation for low-speed
 USB device on AVR microcontrollers
 
