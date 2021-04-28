@@ -1,5 +1,5 @@
 /*
-	Button handling for the	NES Mini Controllers.
+	Button handling for the	NES Mini Controllers (SNES Mini Controller also supported)
 	File written by Albert Gonzalez (albertgonzalez.coffee)
 
 	-------
@@ -30,20 +30,36 @@
 #define NES_BUTTON_LEFT 0x0002
 #define NES_BUTTON_A 0x0010
 #define NES_BUTTON_B 0x0040
-// #define NES_BUTTON_X 0x0008 // not in use for the NES Mini but for the SNES One
-// #define NES_BUTTON_Y 0x0020
-// #define NES_BUTTON_L 0x2000
-// #define NES_BUTTON_R 0x0200
+#define NES_BUTTON_X 0x0008 // SNES Mini Only
+#define NES_BUTTON_Y 0x0020 // SNES Mini Only
+#define NES_BUTTON_L 0x2000 // SNES Mini Only
+#define NES_BUTTON_R 0x0200 // SNES Mini Only
 #define NES_BUTTON_START 0x0400
 #define NES_BUTTON_SELECT 0x1000
+
+void snes_init() {
+
+	// According to http://wiibrew.org/wiki/Wiimote/Extension_Controllers the way to initialize the
+	// SNES Mini Controller is by writting 0x55 to 0xF0 and 0x00 to 0xFB BUT it seems it works only
+	// with the first write. The NES Mini does not require the init, but works anyway with it
+
+	i2c_start();
+	i2c_write_byte(NES_I2C_ADDRESS_WRITE); // 0x52
+	i2c_write_byte(0xF0); // "address"
+	i2c_write_byte(0x55); // info to write
+	i2c_stop();
+}
 
 uint16_t nes_get_state() {
 	i2c_start();
 
 	i2c_write_byte(NES_I2C_ADDRESS_WRITE); // write
 	i2c_write_byte(0x00); // we're gonna read from 0x00
+	i2c_stop();
 
-	i2c_start(); // reset sequence
+	_delay_ms(10); // the nes mini controller seems to work fine without this delay
+
+	i2c_start();
 
 	i2c_write_byte(NES_I2C_ADDRESS_READ); // read
 
