@@ -37,12 +37,12 @@ uint8_t i2c_read_scl() {
 void i2c_set_sda() {
 	// logic 1 'cause open drain
 	DDRB &= ~(1 << I2C_ATTINY85_PORT_SDA); // port as input
-	PORTB &= ~(1 << I2C_ATTINY85_PORT_SDA); // disable internal pullup register
+	PORTB |= (1 << I2C_ATTINY85_PORT_SDA); // enable internal pullup resistor
 }
 
 void i2c_set_scl() {
 	DDRB &= ~(1 << I2C_ATTINY85_PORT_SCL);
-	PORTB &= ~(1 << I2C_ATTINY85_PORT_SCL);
+	PORTB |= (1 << I2C_ATTINY85_PORT_SCL);
 }
 
 void i2c_clear_scl() {
