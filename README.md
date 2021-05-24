@@ -20,6 +20,16 @@ Now a SNES Mini Controller can be attached too! It works in a similar way, but n
 
 By adding default SNES Mini support the USB device now sends TWO bytes instead of only ONE to be able to map all the SNES gamepad buttons (even if you're using a NES Mini Controller).
 
+## Can this thing work as an XInput gamepad?
+
+Emulating a "regular" HID gamepad is cool but, it's possible to use **V-USB** to have a valid XInput device like the **XBox Controllers**?
+
+Those controllers are **full-speed** USB devices, and the only types the V-USB library can handle are the **low-speed** ones so, maybe... not...?
+
+Well, I tried a couple of things and manage to have a valid low-speed XInput device BUT with very limited support (only the "non-analogic" buttons). Also, I'm pretty sure this is a totally _non-standard movement_ and it will eventually crash, fail or just stop working :_ D
+
+[I wrote a post about this on my website](http://www.albertgonzalez.coffee/projects/nesmini_usb_attiny85/xinput_notes.html) with some aditional documentation, links and some code comments.
+
 ## Some extra considerations
 
 Since I'm using an __attiny85__ I needed to change a few things in order to make the __V-USB library__ work with it.
