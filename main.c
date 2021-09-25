@@ -59,8 +59,6 @@ typedef struct{
 
 static report_t reportBuffer;
 
-static uchar    idleRate;   /* repeat rate for keyboards, never used for mice */
-
 static uint16_t nes_controller_state;
 
 // implementation required, but not used
