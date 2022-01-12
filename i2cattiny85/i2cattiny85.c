@@ -45,13 +45,13 @@ void i2c_set_scl() {
 	PORTB |= (1 << I2C_ATTINY85_PORT_SCL);
 }
 
-void i2c_clear_scl() {
+void i2c_clear_sda() {
 	// logic 0 (we're active pulling down the line by setting the 1)
 	DDRB |= (1 << I2C_ATTINY85_PORT_SDA); // port as output
 	PORTB &= ~(1 << I2C_ATTINY85_PORT_SDA); // set port to 1 (read as logic 0)
 }
 
-void clear_scl() {
+void i2c_clear_scl() {
 	DDRB |= (1 << I2C_ATTINY85_PORT_SCL);
 	PORTB &= ~(1 << I2C_ATTINY85_PORT_SCL);
 }
@@ -66,12 +66,12 @@ void i2c_start() {
 	i2c_set_sda();
 	i2c_set_scl();
 	i2c_delay();
+	i2c_clear_sda();
 	i2c_clear_scl();
-	clear_scl();
 }
 
 void i2c_stop() {
-	i2c_clear_scl();
+	i2c_clear_sda();
 	i2c_delay();
 
 	i2c_set_scl();
@@ -85,12 +85,12 @@ void i2c_stop() {
 
 void i2c_write_single_bit(uint8_t bit) {
 	if (bit) i2c_set_sda();
-	else i2c_clear_scl();
+	else i2c_clear_sda();
 
 	i2c_set_scl(); // clock high to indicate a new valid sda value
 	while (i2c_read_scl() == 0) { }
 
-	clear_scl(); // pull clock low once it's finished
+	i2c_clear_scl(); // pull clock low once it's finished
 }
 
 uint8_t i2c_read_single_bit() {
@@ -101,7 +101,7 @@ uint8_t i2c_read_single_bit() {
 
 	uint8_t bit = i2c_read_sda(); // read the pin value (set by slave)
 
-	clear_scl(); // pull clock low once it's finished
+	i2c_clear_scl(); // pull clock low once it's finished
 
 	return bit;
 }
