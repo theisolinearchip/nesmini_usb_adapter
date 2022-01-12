@@ -11,8 +11,7 @@ it does the work pretty well!).
     * __nesminicontrollerdrv.c__ implements the Controller poll. It reads from the proper register and fetch the bytes related to the pressed buttons.
 There are a few constants for each button that can be used to check which one was pressed (it allows multiple buttons pressed at the same time).
 
-    * __i2cattiny85/i2cattiny85.c__ contains some low-level functions to send and read bytes using the SDA and SCL lines. In this case the file
-is set for the attiny85 pins, but it can be changed if another microcontroller is used (didn't try that, but in theory it should work).
+    * __i2cattiny85/i2cattiny85.c__ contains some low-level functions to send and read bytes using the original SDA and SCL pins. It doesn't use anything related to the available AVR Two-Wire mode (it even uses the internal pull-up resistors that seems to work fine on the controllers!) and it's a "pure bit-banging implementation". It should also work with any other pin combination (I started it with the "original ones" while learning more about the protocol and how the micro implements it and, back then, wasn't pretty sure about the differences between the dedicated pins, the TWI and the bit-banging approach).
 
 ## SNES Mini Controller Support
 
