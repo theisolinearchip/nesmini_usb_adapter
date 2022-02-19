@@ -12,6 +12,8 @@
 	It's mostly based on the "Example of bit-banging the
 	I2C master protocol" section from the Wikipedia I2C page:
 	https://en.wikipedia.org/wiki/I%C2%B2C
+
+	DEPRECATED (using now I2C TWI-based new libraries)
 */
 
 #ifndef I2Cattiny85_c

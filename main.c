@@ -14,8 +14,9 @@
 	different (it's the same pin used by the SDA signal on the I2C part, so
 	I changed the interrupts to use that pin instead of the original one)
 
-	The nesminicontrollerdrv.c uses the functions from the i2cattiny85/i2cattiny85.c
-	file. It's a custom homemade implementation for basic read/write on SDA/SCL.
+	The nesminicontrollerdrv.c uses a small I2C library that uses the two-wire mode
+	(more on this here: https://github.com/theisolinearchip/i2c_attiny85_twi).
+	Those files are located on the i2cattiny85/ folder
 
 	----
 
@@ -52,56 +53,12 @@ PROGMEM const char usbHidReportDescriptor[27] = {
     0xC0,                          // END_COLLECTION
 };
 
-typedef struct{
-	uchar   commonButtonMask;	// 8 buttons, D-pad, A, B, SELECT, START
-	uchar   snesButtonMask;		// X, Y, L, R (SNES only), the last bits are not used
-}report_t;
-
-static report_t reportBuffer;
-
-static uint16_t nes_controller_state;
+static snes_report_t report_buffer;
+static snes_controller_state controller_state = { 0, 0 };
 
 // implementation required, but not used
 usbMsgLen_t usbFunctionSetup(uchar data[8]) {
 	return 0;
-}
-
-void process_buttons() {
-	reportBuffer.commonButtonMask = reportBuffer.snesButtonMask = 0x00;
-
-	// UP 0
-	// RIGHT 1
-	// DOWN 2 
-	// LEFT 3 
-	// SELECT 4
-	// START 5
-	// B 6
-	// A 7
-	// X 8 (SNES only)
-	// Y 9 (SNES only)
-	// L 10 (SNES only)
-	// R 11 (SNES only)
-	//
-	// wanna read an EXACT MATCH without any other buttons?
-	// use (!(nes_controller_state ^ NES_BUTTON_SELECT)) instead
-
-	if (nes_controller_state & NES_BUTTON_UP) reportBuffer.commonButtonMask = 0x01;
-	if (nes_controller_state & NES_BUTTON_RIGHT) reportBuffer.commonButtonMask |= (0x01 << 1);
-	if (nes_controller_state & NES_BUTTON_DOWN) reportBuffer.commonButtonMask |= (0x01 << 2);
-	if (nes_controller_state & NES_BUTTON_LEFT) reportBuffer.commonButtonMask |= (0x01 << 3);
-
-	if (nes_controller_state & NES_BUTTON_SELECT) reportBuffer.commonButtonMask |= (0x01 << 4);
-	if (nes_controller_state & NES_BUTTON_START) reportBuffer.commonButtonMask |= (0x01 << 5);
-
-	if (nes_controller_state & NES_BUTTON_B) reportBuffer.commonButtonMask |= (0x01 << 6);
-	if (nes_controller_state & NES_BUTTON_A) reportBuffer.commonButtonMask |= (0x01 << 7);
-
-	if (nes_controller_state & NES_BUTTON_X) reportBuffer.snesButtonMask = 0x01;
-	if (nes_controller_state & NES_BUTTON_Y) reportBuffer.snesButtonMask |= (0x01 << 1);
-
-	if (nes_controller_state & NES_BUTTON_L) reportBuffer.snesButtonMask |= (0x01 << 2);
-	if (nes_controller_state & NES_BUTTON_R) reportBuffer.snesButtonMask |= (0x01 << 3);
-
 }
 
 int __attribute__((noreturn)) main(void) {
@@ -109,10 +66,6 @@ int __attribute__((noreturn)) main(void) {
 	DDRB |= (1 << LED_PIN);
 
 	uchar i;
-	nes_controller_state = 0;
-
-	// snes pre-read init, nes controller works fine with it
-	snes_init();
 
 	wdt_enable(WDTO_1S);
 	
@@ -126,23 +79,43 @@ int __attribute__((noreturn)) main(void) {
 
 	usbDeviceConnect();
 	sei();
+
+	// i2c_init, basically
+	snes_init();
+
+	// snes first connect attempt (will set the connected flag to 1/0)
+	snes_connect(&controller_state);
+
 	while(1) {
 		wdt_reset();
 		usbPoll();
-		if(usbInterruptIsReady()) {
-			/* called after every poll of the interrupt endpoint */
+		if (usbInterruptIsReady()) {
+			// called after every poll of the interrupt endpoint
 
-			nes_controller_state = nes_get_state();
-			process_buttons();
+			if (controller_state.connected) {
+				// fetch (or try to) only if connected (in the snes the connection
+				// doesn't mind the proper initialization, so if we try to fetch always
+				// then an effective 0x00 will be read without the init, so force
+				// snes_connect everytime the connection is lost)
+				snes_get_state(&controller_state);
+			} else {
+				PORTB |= (1 << LED_PIN);
+				snes_connect(&controller_state);
+				if (controller_state.connected) PORTB &= ~(1 << LED_PIN);
+			}
 
-			usbSetInterrupt((void *)&reportBuffer, sizeof(reportBuffer));
+			snes_set_report_buttons(&controller_state, &report_buffer);
+
+			usbSetInterrupt((void *)&report_buffer, sizeof(report_buffer));
 		}
 
 		// set led if some key was preset (outside the USB interrupt block)
-		if (nes_controller_state) {
-			PORTB |= (1 << LED_PIN);
-		} else {
-			PORTB &= ~(1 << LED_PIN);
+		if (controller_state.connected) {
+			if (controller_state.buttons) {
+				PORTB |= (1 << LED_PIN);
+			} else {
+				PORTB &= ~(1 << LED_PIN);
+			}
 		}
 	}
 }
