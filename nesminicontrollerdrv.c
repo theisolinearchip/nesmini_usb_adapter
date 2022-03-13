@@ -77,7 +77,7 @@ static void snes_get_state(snes_controller_state *state) {
 		return;
 	}
 
-	_delay_ms(10); // the nes mini controller seems to work fine without this delay
+	_delay_ms(5); // the nes mini controller seems to work fine without this delay
 
 	i2c_start();
 
