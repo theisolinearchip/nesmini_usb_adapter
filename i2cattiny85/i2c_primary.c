@@ -2,6 +2,12 @@
 
 void i2c_init() {
 
+	DDRB |= (1 << PIN_SDA);
+	DDRB |= (1 << PIN_SCL);
+
+	PORTB |= (1<<PIN_SCL);
+	PORTB |= (1<<PIN_SDA);
+
 	USIDR = 0xFF;
 
 	USICR = (1 << USIWM1) | (1 << USICS1) | (1 << USICLK);
@@ -9,10 +15,6 @@ void i2c_init() {
 	USISR = (1 << USISIF) | (1 << USIOIF) | (1 << USIPF) |
 			(1 << USIDC) |    // Clear flags,
 			(0x0 << USICNT0); // and reset counter.
-
-	DDRB |= (1 << PIN_SDA); // output (after enabling the two-wire mode)
-	DDRB |= (1 << PIN_SCL); // output
-
 }
 
 void i2c_start() {
